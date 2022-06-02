@@ -1,5 +1,10 @@
 on:
   workflow_dispatch: # this is used to trigger the workflow on non-main branches
+    inputs:
+      pr:
+        description: 'PR number from the selected branch to test'
+        type: string
+        required: true
   issue_comment:
     types: [created, edited]
 
@@ -53,8 +58,12 @@ jobs:
       - name: get-PR-ref
         id: get-PR-ref
         run: |
-            ref=$(cat $GITHUB_EVENT_PATH | jq -r '.issue.pull_request.url' | sed  's#^.*\/pulls#refs\/pull#' | sed 's#$#\/merge#')
-            echo "reference for PR: " ${ref}
+            if [ github.event_name == 'issue_comment' ]; then
+                ref=$(cat $GITHUB_EVENT_PATH | jq -r '.issue.pull_request.url' | sed  's#^.*\/pulls#refs\/pull#' | sed 's#$#\/merge#')
+            else # workflow_dispatch
+                ref="refs/pull/${{ github.event.inputs.pr }}/merge"
+            fi
+            echo "reference for PR: " ${ref} "event:" ${{ github.event_name }}
             echo "##[set-output name=pr-ref;]${ref}"
       - uses: actions/checkout@v2
         with:
@@ -89,8 +98,12 @@ jobs:
       - name: get-PR-ref
         id: get-PR-ref
         run: |
-            ref=$(cat $GITHUB_EVENT_PATH | jq -r '.issue.pull_request.url' | sed  's#^.*\/pulls#refs\/pull#' | sed 's#$#\/merge#')
-            echo "reference for PR: " ${ref}
+            if [ github.event_name == 'issue_comment' ]; then
+                ref=$(cat $GITHUB_EVENT_PATH | jq -r '.issue.pull_request.url' | sed  's#^.*\/pulls#refs\/pull#' | sed 's#$#\/merge#')
+            else # workflow_dispatch
+                ref="refs/pull/${{ github.event.inputs.pr }}/merge"
+            fi
+            echo "reference for PR: " ${ref} "event:" ${{ github.event_name }}
             echo "##[set-output name=pr-ref;]${ref}"
       - uses: actions/checkout@v2
         with:
@@ -116,8 +129,12 @@ jobs:
       - name: get-PR-ref
         id: get-PR-ref
         run: |
-            ref=$(cat $GITHUB_EVENT_PATH | jq -r '.issue.pull_request.url' | sed  's#^.*\/pulls#refs\/pull#' | sed 's#$#\/merge#')
-            echo "reference for PR: " ${ref}
+            if [ github.event_name == 'issue_comment' ]; then
+                ref=$(cat $GITHUB_EVENT_PATH | jq -r '.issue.pull_request.url' | sed  's#^.*\/pulls#refs\/pull#' | sed 's#$#\/merge#')
+            else # workflow_dispatch
+                ref="refs/pull/${{ github.event.inputs.pr }}/merge"
+            fi
+            echo "reference for PR: " ${ref} "event:" ${{ github.event_name }}
             echo "##[set-output name=pr-ref;]${ref}"
       - uses: actions/checkout@v2
         with:
