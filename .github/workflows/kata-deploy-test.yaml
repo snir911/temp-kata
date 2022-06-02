@@ -20,7 +20,7 @@ jobs:
         id: is_organization_member
         with:
           organization: kata-containers
-          username: ${{ github.event.comment.user.login }}
+          username: ${{ github.event.comment.user.login | github.event.sender.login }}
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Check membership on dispatch
         uses: kata-containers/is-organization-member@1.0.1
